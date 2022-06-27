@@ -17,6 +17,8 @@ public class TimeManager : MonoBehaviour
 
   [SerializeField] private Progress progress;
 
+  OptionsManager optionsManager;
+
 
   private void Start()
   {
@@ -26,6 +28,8 @@ public class TimeManager : MonoBehaviour
     }
 
     progress.UpdateDayLeftText(totalDays );
+
+    optionsManager = FindObjectOfType<OptionsManager>();
   }
 
   void Update()
@@ -72,6 +76,8 @@ public class TimeManager : MonoBehaviour
       _hour -= 24;
       UpdateTimeText();
       progress.UpdateDayLeftText(totalDays );
+
+      optionsManager.NewOptionsOnDay(totalDays);
 
       if (totalDays <= 0)
       {
