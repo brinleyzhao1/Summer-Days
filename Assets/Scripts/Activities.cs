@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -21,13 +22,27 @@ public class Activities : MonoBehaviour
 
 
   [Header("Expandable Options")] [SerializeField]
-  private GameObject eatOptions;[SerializeField]
-  private GameObject sleepOptions;
+  private GameObject eatOptions;
+
+  [SerializeField] private GameObject sleepOptions;
+
+
+  [Header("Time, Energy, Hunger, Fulfillment, Boredom, HW")]
+  public int[] readingEffect = new int[6] {40, -2, -5, 5, -5, 0};
+  public int[] potionEffect = new int[6] {30, -4, -4, -2, 5, 4};
+  public int[] napEffect = new int[6] {30, 10, -1, -3, 1, 0};
+  public int[] sleepEffect = new int[6] {300, 60, -3, -5, 1, 0};
+  public int[] studyEffect = new int[6] {50, -7, -4, -4, 5, 7};
+  public int[] snackEffect = new int[6] {10, 1, 20, 1, -1, 0};
+  public int[] mealEffect = new int[6] {20, 1, 40, -1, -1, 0};
+  public int[] musicEffect = new int[6] {20, -2, -2, 2, -3, 0};
+  public int[] walkEffect = new int[6] {30, -4, -4, 2, -2, 0};
+
+
 
   private void Start()
   {
-
-CloseAllOptions();
+    CloseAllOptions();
 
     if (timeManager == null)
     {
@@ -70,14 +85,15 @@ CloseAllOptions();
     if (IfTooHungry()) return;
     if (IfInMiddleOfOtherActivity()) return;
 
-    StartCoroutine(UpdateStatusAndProgress(30, 10, -1, -3, 1, 0));
+    StartCoroutine(UpdateStatusAndProgress(napEffect));
   }
+
   public void BtnLongSleep()
   {
     if (IfTooHungry()) return;
     if (IfInMiddleOfOtherActivity()) return;
 
-    StartCoroutine(UpdateStatusAndProgress(80, 30, -3, -5, 1, 0));
+    StartCoroutine(UpdateStatusAndProgress(sleepEffect));
   }
 
   #endregion
@@ -102,14 +118,15 @@ CloseAllOptions();
     if (IfInMiddleOfOtherActivity()) return;
 
 
-    StartCoroutine(UpdateStatusAndProgress(10, 1, 10, 1, -1, 0));
+    StartCoroutine(UpdateStatusAndProgress(snackEffect));
   }
+
   public void BtnEatMeal()
   {
     if (IfInMiddleOfOtherActivity()) return;
 
 
-    StartCoroutine(UpdateStatusAndProgress(20, 1, 25, -1, -1, 0));
+    StartCoroutine(UpdateStatusAndProgress(mealEffect));
   }
 
   #endregion
@@ -122,7 +139,9 @@ CloseAllOptions();
     if (IfTooTired()) return;
 
     currentProgressBar = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Image>();
-    StartCoroutine(UpdateStatusAndProgress(40, -2, -5, 5, -5, 0));
+
+    StartCoroutine(UpdateStatusAndProgress(readingEffect));
+    // StartCoroutine(UpdateStatusAndProgress(40, -2, -5, 5, -5, 0));
   }
 
   public void BtnMusic()
@@ -132,7 +151,7 @@ CloseAllOptions();
     if (IfTooTired()) return;
 
     currentProgressBar = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Image>();
-    StartCoroutine(UpdateStatusAndProgress(20, -2, -2, 2, -3, 0));
+    StartCoroutine(UpdateStatusAndProgress(musicEffect));
   }
 
   public void BtnWalk()
@@ -142,7 +161,7 @@ CloseAllOptions();
     if (IfTooTired()) return;
 
     currentProgressBar = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Image>();
-    StartCoroutine(UpdateStatusAndProgress(30, -4, -4, 2, -2, 0));
+    StartCoroutine(UpdateStatusAndProgress(walkEffect));
   }
 
   public void BtnPotion()
@@ -153,7 +172,7 @@ CloseAllOptions();
     if (IfTooBored()) return;
 
     currentProgressBar = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Image>();
-    StartCoroutine(UpdateStatusAndProgress(30, -4, -4, -2, 5, 4));
+    StartCoroutine(UpdateStatusAndProgress(potionEffect));
   }
 
   public void BtnStudy()
@@ -164,7 +183,7 @@ CloseAllOptions();
     if (IfTooBored()) return;
 
     currentProgressBar = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Image>();
-    StartCoroutine(UpdateStatusAndProgress(50, -7, -4, -4, 5, 7));
+    StartCoroutine(UpdateStatusAndProgress(studyEffect));
   }
 
 
@@ -220,8 +239,16 @@ CloseAllOptions();
   }
 
 
-  private IEnumerator UpdateStatusAndProgress(int time, int energy, int hunger, int fulfillment, int boredom, int hw)
+  private IEnumerator UpdateStatusAndProgress( int[] arr)
   {
+    // int time, int energy, int hunger, int fulfillment, int boredom, int hw
+    int time = arr[0];
+    int energy = arr[1];
+    int hunger = arr[2];
+    int fulfillment = arr[3];
+    int boredom = arr[4];
+    int hw = arr[5];
+
     CloseAllOptions();
 
     // StartCoroutine(Countdown(time));
@@ -237,8 +264,6 @@ CloseAllOptions();
     // status.UpdateChangeText(energy, hunger, fulfillment, boredom);
 
     progress.UpdateMood(status.energy, status.hunger, status.fulfillment, status.boredom);
-
-
   }
 
   // private IEnumerator Wait(int time)
