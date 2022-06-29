@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using Audio;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Image = UnityEngine.UI.Image;
@@ -21,23 +22,23 @@ public class Activities : MonoBehaviour
   private Image currentProgressBar;
 
 
-  [Header("Expandable Options")] [SerializeField]
-  private GameObject eatOptions;
-
+  [Header("Expandable Options")]
+  [SerializeField] private GameObject eatOptions;
   [SerializeField] private GameObject sleepOptions;
+  [SerializeField] private GameObject musicOptions;
 
 
   [Header("Time, Energy, Hunger, Fulfillment, Boredom, HW")]
-  public int[] readingEffect = new int[6] {40, -2, -5, 5, -5, 0};
-  public int[] potionEffect = new int[6] {30, -4, -4, -2, 5, 4};
-  public int[] napEffect = new int[6] {30, 10, -1, -3, 1, 0};
-  public int[] sleepEffect = new int[6] {300, 60, -3, -5, 1, 0};
-  public int[] studyEffect = new int[6] {50, -7, -4, -4, 5, 7};
-  public int[] snackEffect = new int[6] {10, 1, 20, 1, -1, 0};
-  public int[] mealEffect = new int[6] {20, 1, 40, -1, -1, 0};
-  public int[] musicEffect = new int[6] {20, -2, -2, 2, -3, 0};
-  public int[] walkEffect = new int[6] {30, -4, -4, 2, -2, 0};
+  public int[] readingEffect = new int[6] { 40, -2, -5, 5, -5, 0 };
 
+  public int[] potionEffect = new int[6] { 30, -4, -4, -2, 5, 4 };
+  public int[] napEffect = new int[6] { 30, 10, -1, -3, 1, 0 };
+  public int[] sleepEffect = new int[6] { 300, 60, -3, -5, 1, 0 };
+  public int[] studyEffect = new int[6] { 50, -7, -4, -4, 5, 7 };
+  public int[] snackEffect = new int[6] { 10, 1, 20, 1, -1, 0 };
+  public int[] mealEffect = new int[6] { 20, 1, 40, -1, -1, 0 };
+  public int[] musicEffect = new int[6] { 20, -2, -2, 2, -3, 0 };
+  public int[] walkEffect = new int[6] { 30, -4, -4, 2, -2, 0 };
 
 
   private void Start()
@@ -64,6 +65,8 @@ public class Activities : MonoBehaviour
   {
     eatOptions.SetActive(false);
     sleepOptions.SetActive(false);
+    musicOptions.SetActive(false);
+
   }
 
   //potential activities: write letter to friends; work to earn money; facetime friend via globe
@@ -150,8 +153,22 @@ public class Activities : MonoBehaviour
     if (IfTooHungry()) return;
     if (IfTooTired()) return;
 
+
+    CloseAllOptions();
+
+    musicOptions.SetActive(true);
+
+
     currentProgressBar = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Image>();
+
+  }
+
+  public void BtnMusicTrackOption(int trackNum)
+  {
     StartCoroutine(UpdateStatusAndProgress(musicEffect));
+
+    BgmChanger bgmChanger = FindObjectOfType<BgmChanger>();
+    bgmChanger.PlayTrack(trackNum);
   }
 
   public void BtnWalk()
@@ -239,7 +256,7 @@ public class Activities : MonoBehaviour
   }
 
 
-  private IEnumerator UpdateStatusAndProgress( int[] arr)
+  private IEnumerator UpdateStatusAndProgress(int[] arr)
   {
     // int time, int energy, int hunger, int fulfillment, int boredom, int hw
     int time = arr[0];
